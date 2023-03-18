@@ -26,6 +26,7 @@ resource "aws_lambda_layer_version" "lambda_layer" {
   compatible_runtimes = [var.runtime]
 }
 
+# adjust the runtime and handler if the image config is set
 resource "aws_lambda_function" "this" {
   function_name    = local.function_name
   architectures    = var.architectures
