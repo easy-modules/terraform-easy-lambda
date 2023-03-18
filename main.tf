@@ -27,6 +27,7 @@ resource "aws_lambda_layer_version" "lambda_layer" {
 }
 
 # adjust the runtime and handler if the image config is set
+# otherwise use the zip file
 resource "aws_lambda_function" "this" {
   function_name    = local.function_name
   architectures    = var.architectures
