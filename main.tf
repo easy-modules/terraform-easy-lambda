@@ -1,5 +1,5 @@
 locals {
-  has_image_config        = try(var.image_config, null) != null
+  has_image_config        = try(var.image_config, null) == null
   id                      = split("-", uuid())[0]
   function_name           = coalesce(var.function_name, format("%s-%s", "lambda", local.id))
   enable_layer_dependency = var.enable_layer_dependency && local.has_image_config == false
@@ -21,7 +21,7 @@ data "archive_file" "dependencies_zip" {
 resource "aws_lambda_layer_version" "lambda_layer" {
   count      = local.enable_layer_dependency ? 1 : 0
   layer_name = var.layer_name
-  filename   = data.archive_file.dependencies_zip.output_path
+  filename   = data.archive_file.dependencies_zip[count.index].output_path
 
   compatible_runtimes = [var.runtime]
 }
@@ -33,7 +33,7 @@ resource "aws_lambda_function" "this" {
   memory_size      = var.memory_size
   description      = var.description
   timeout          = var.timeout
-  layers           = local.enable_layer_dependency ? aws_lambda_layer_version.lambda_layer.arn : null
+  layers           = local.enable_layer_dependency ? aws_lambda_layer_version.lambda_layer[aws_lambda_layer_version.lambda_layer].arn : null
   runtime          = local.has_image_config ? null : var.runtime
   handler          = local.has_image_config ? null : var.handler
   filename         = local.has_image_config ? null : data.archive_file.lambda_zip.output_path

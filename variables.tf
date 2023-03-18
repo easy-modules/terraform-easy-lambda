@@ -37,13 +37,13 @@ variable "memory_size" {
 variable "source_file_path" {
   type        = string
   description = "The path to the function's deployment package within the local filesystem."
-  default     = "./lambda/"
+  default     = "./src/index.js"
 }
 
 variable "dependencies_path" {
   type        = string
   description = "The path to the function's dependencies within the local filesystem."
-  default     = "./lambda/node_modules/"
+  default     = ""
 }
 
 variable "iam_role_arn" {
@@ -52,11 +52,6 @@ variable "iam_role_arn" {
   default     = ""
 }
 
-variable "layers" {
-  type        = list(string)
-  description = "A list of function layers to add to the function's execution environment."
-  default     = []
-}
 
 variable "environment" {
   type        = map(string)
@@ -67,12 +62,6 @@ variable "environment" {
 variable "tracing_config" {
   type        = map(string)
   description = "A map that configures options for function tracing."
-  default     = {}
-}
-
-variable "dead_letter_config" {
-  type        = map(string)
-  description = "A map that configures options for function dead letter queue."
   default     = {}
 }
 
@@ -147,13 +136,13 @@ variable "maximum_retry_attempts" {
 }
 
 variable "on_failure_destination" {
-  type        = string
+  type        = map(any)
   description = "The Amazon Resource Name (ARN) of an Amazon SQS queue or Amazon SNS topic."
   default     = {}
 }
 
 variable "on_success_destination" {
-  type        = string
+  type        = map(any)
   description = "The Amazon Resource Name (ARN) of an Amazon SQS queue or Amazon SNS topic."
   default     = {}
 }
@@ -164,4 +153,10 @@ variable "lambda_permissions" {
   type        = map(string)
   description = "A list of maps that define the permissions for the Lambda function."
   default     = {}
+}
+
+variable "event_invoke_config_enabled" {
+  type        = bool
+  description = "Whether to enable the event invoke config."
+  default     = false
 }
