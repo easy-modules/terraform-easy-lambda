@@ -1,0 +1,19 @@
+name: PR Approved
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  delete-branch:
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved'
+    steps:
+      - name: Send Notification
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: GitHub
+          DISCORD_AVATAR: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+        with:
+          args: "The branch '${{ github.event.pull_request.head.ref }}' has been approved."
